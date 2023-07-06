@@ -30,7 +30,7 @@ public class SaveStudentOrder {
 //        so.setHusband(husband);
 //
 //        String ans =  husband.getPersonString();
-//        System.out.println(ans);
+        System.out.println(ans);
 
 
         return so;
