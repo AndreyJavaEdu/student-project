@@ -24,33 +24,27 @@ public class StudentOrderValidator {
 
     public static void main(String[] args) {
         StudentOrderValidator sov = new StudentOrderValidator();
-
-
         sov.checkAll();
     }
     public void checkAll() {
-
-        while (true) {
-            StudentOrder so = readStudentOrder();
-            if(so==null){
-                break;
-            }
-            AnswerCityRegister cityAnswer = checkCityRegister(so);
-            if(!cityAnswer.succsess) {
-//                continue;
-                break;
-            }
-            AnswerWedding wedAnswer = checkWedding(so);
-            AnswerChildren childAnswer = chekChildren(so);
-            AnswerStudent studentAnswer = checkStudent(so);
-
-            sendMail(so);
-//            so = readStudentOrder(); //тут снова читаем заявку и если она снова существует то цикл повторяется
+        StudentOrder[] soArray =  readStudentOrders();
+        for(int j=0; j < soArray.length; j++){
+            System.out.println();
+            che(soArray[j]);
         }
+
+
+
+
+
+
     }
-    public StudentOrder readStudentOrder() {
-        StudentOrder so = new StudentOrder();
-        return so;
+    public StudentOrder[] readStudentOrders() {
+        StudentOrder[] soArray = new StudentOrder[3];
+        for (int j=0; j<soArray.length; j++){
+           soArray[j]= SaveStudentOrder.buildStudentOrder(j);
+        }
+        return soArray;
     }
 
     public AnswerCityRegister checkCityRegister(StudentOrder so){
