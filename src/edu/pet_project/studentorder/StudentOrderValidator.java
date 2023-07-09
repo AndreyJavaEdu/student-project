@@ -25,27 +25,39 @@ public class StudentOrderValidator {
     public static void main(String[] args) {
         StudentOrderValidator sov = new StudentOrderValidator();
         sov.checkAll();
+
     }
     public void checkAll() {
-        StudentOrder[] soArray =  readStudentOrders();
-        for(int j=0; j < soArray.length; j++){
+        StudentOrder[] soArray = readStudentOrders();
+        for (int j=0; j<soArray.length; j++){
+            checkOneOrder(soArray[j]);
             System.out.println();
-            che(soArray[j]);
         }
 
-
-
-
-
-
     }
+
     public StudentOrder[] readStudentOrders() {
         StudentOrder[] soArray = new StudentOrder[3];
         for (int j=0; j<soArray.length; j++){
-           soArray[j]= SaveStudentOrder.buildStudentOrder(j);
+            soArray[j]= SaveStudentOrder.buildStudentOrder(j);
         }
         return soArray;
     }
+
+    public void checkOneOrder (StudentOrder so){
+            AnswerCityRegister cityRegister = checkCityRegister(so);
+            AnswerChildren childAnswer = chekChildren(so);
+            AnswerStudent  studentAnswer = checkStudent(so);
+            AnswerWedding weddingAnswer = checkWedding(so);
+            sendMail(so);
+    }
+
+
+
+
+
+
+
 
     public AnswerCityRegister checkCityRegister(StudentOrder so){
 
