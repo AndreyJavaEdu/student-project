@@ -7,14 +7,19 @@ import java.time.LocalDate;
 общие поля адреса
  */
 public abstract class Person {
-   protected String surname;
-   protected String givenName;
+   private String surname;
+   private String givenName;
    private String patronomyc;//Отчество
    private LocalDate dateOfBithday;
    private Address address;
 
-   public String getPersonString(){
-      return surname+ " " + givenName;
+   public Person(){}
+
+   public Person(String surname, String givenName, String patronomyc, LocalDate dateOfBithday) {
+      this.surname = surname;
+      this.givenName = givenName;
+      this.patronomyc = patronomyc;
+      this.dateOfBithday = dateOfBithday;
    }
 
    public Address getAddress() {
