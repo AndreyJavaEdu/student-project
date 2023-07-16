@@ -9,7 +9,7 @@ import edu.pet_project.studentorder.exception.CityRegisterException;
 public class FakeCityRegisterChecker implements CityRegisterChecker  {
     public CityRegisterCheckerResponse checkPerson(Person person) throws CityRegisterException {
         if (person instanceof Adult) {
-            System.out.println("ADULT");
+            Adult t = (Adult) person; //приведение
         }
         return null;
     }
