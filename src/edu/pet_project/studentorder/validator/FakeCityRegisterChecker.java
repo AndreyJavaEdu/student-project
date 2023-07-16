@@ -10,7 +10,13 @@ public class FakeCityRegisterChecker implements CityRegisterChecker  {
     public CityRegisterCheckerResponse checkPerson(Person person) throws CityRegisterException {
         if (person instanceof Adult) {
             Adult t = (Adult) person; //приведение
-        }
+            if(t.getPassportSerial() == "1000" {
+                CityRegisterCheckerResponse res = new CityRegisterCheckerResponse();
+                res.setExisting(true);
+                res.setTemporal(false);
+
+                }
+            }
         return null;
     }
 }
