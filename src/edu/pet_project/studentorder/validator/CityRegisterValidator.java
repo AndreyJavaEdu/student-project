@@ -1,6 +1,7 @@
 package edu.pet_project.studentorder.validator;
 
 import edu.pet_project.studentorder.domain.AnswerCityRegister;
+import edu.pet_project.studentorder.domain.CityRegisterCheckerResponse;
 import edu.pet_project.studentorder.domain.StudentOrder;
 import edu.pet_project.studentorder.exception.CityRegisterException;
 
@@ -21,9 +22,9 @@ public class CityRegisterValidator {
 
     public AnswerCityRegister checkCityRegister(StudentOrder so){
         try {
-            personChecker.checkPerson(so.getHusband()); // в студ заявлении есть муж
-            personChecker.checkPerson(so.getWife());
-            personChecker.checkPerson(so.getChild());
+            CityRegisterCheckerResponse hans = personChecker.checkPerson(so.getHusband()); // в студ заявлении есть муж
+            CityRegisterCheckerResponse wans = personChecker.checkPerson(so.getWife());
+            CityRegisterCheckerResponse cans =  personChecker.checkPerson(so.getChild());
         } catch (CityRegisterException ex){
             ex.printStackTrace();
         }
