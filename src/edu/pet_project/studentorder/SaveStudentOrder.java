@@ -53,6 +53,10 @@ public class    SaveStudentOrder {
         child.setIssueDepartment("Отдел ЗАГС №" + id);
         child.setAddress(address);
 
+        so.setHusband(husband);
+        so.setWife(wife);
+        so.setChild(child);
+
 
         return so;
     }

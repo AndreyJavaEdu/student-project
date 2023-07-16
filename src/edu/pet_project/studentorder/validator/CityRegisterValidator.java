@@ -15,6 +15,7 @@ public class CityRegisterValidator {
     private CityRegisterChecker personChecker;
 
     public CityRegisterValidator() {
+
         personChecker = new FakeCityRegisterChecker();
     }
 
