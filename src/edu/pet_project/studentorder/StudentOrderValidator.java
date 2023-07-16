@@ -25,6 +25,8 @@ public class StudentOrderValidator {
     public static void main(String[] args) {
         StudentOrderValidator sov = new StudentOrderValidator();
         sov.checkAll();
+        System.out.println();
+        System.out.println();
 
     }
     public void checkAll() {
