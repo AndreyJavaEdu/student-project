@@ -7,31 +7,29 @@ import edu.pet_project.studentorder.exception.CityRegisterException;
 
 public class CityRegisterValidator {
 
-    public String hostName;
-    protected int port;
-    private String login;
-    String password;
+//    public String hostName;
+//    protected int port;
+//    private String login;
+//    String password;
 
     private CityRegisterChecker personChecker;
 
     public CityRegisterValidator() {
+
         personChecker = new FakeCityRegisterChecker();
     }
 
 
-
-    public AnswerCityRegister checkCityRegister(StudentOrder so){
+    public AnswerCityRegister checkCityRegister(StudentOrder so) {
         try {
             CityRegisterCheckerResponse hans = personChecker.checkPerson(so.getHusband()); // в студ заявлении есть муж
             CityRegisterCheckerResponse wans = personChecker.checkPerson(so.getWife());
-            CityRegisterCheckerResponse cans =  personChecker.checkPerson(so.getChild());
-        } catch (CityRegisterException ex){
-            ex.printStackTrace();
+            CityRegisterCheckerResponse cans = personChecker.checkPerson(so.getChild());
+        } catch (CityRegisterException ex) {
+            ex.printStackTrace(System.out);
         }
 
-
         AnswerCityRegister ans = new AnswerCityRegister();
-
         return ans;
     }
 }

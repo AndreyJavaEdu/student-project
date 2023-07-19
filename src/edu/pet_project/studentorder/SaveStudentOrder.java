@@ -35,7 +35,7 @@ public class    SaveStudentOrder {
          husband.setIssueDepartment("Отдел милиции №" + id);
          husband.setStudentId("" + (1000 + id));
          husband.setAddress(address);
-        System.out.println();
+//        System.out.println();
 
          //Жена
         Adult wife = new Adult("Петрова", "Вероника", "Алексеевна", LocalDate.of(1998, 3, 12));
@@ -52,6 +52,10 @@ public class    SaveStudentOrder {
         child.setIssueDate(LocalDate.of(2018, 7, 19));
         child.setIssueDepartment("Отдел ЗАГС №" + id);
         child.setAddress(address);
+
+        so.setHusband(husband);
+        so.setWife(wife);
+        so.setChild(child);
 
 
         return so;
