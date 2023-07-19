@@ -18,6 +18,7 @@ public class FakeCityRegisterChecker implements CityRegisterChecker {
         CityRegisterCheckerResponse res = new CityRegisterCheckerResponse();
         if (person instanceof Adult) {
             Adult t = (Adult) person; //приведение
+            String ps = t.getPassportSerial();
             if (t.getPassportSerial().equals(GOOD_1) || t.getPassportSerial().equals(GOOD_2)) {
                 res.setExisting(true);
                 res.setTemporal(false);
@@ -28,7 +29,7 @@ public class FakeCityRegisterChecker implements CityRegisterChecker {
                 res.setExisting(false);
             }
             if (t.getPassportSerial().equals(ERROR_1) || t.getPassportSerial().equals(ERROR_2)) {
-                CityRegisterException ex = new CityRegisterException("Fake Error");
+                CityRegisterException ex = new CityRegisterException("Fake Error " + ps);
                 throw ex;
             }
         }
