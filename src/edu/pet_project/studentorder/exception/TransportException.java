@@ -1,4 +1,4 @@
-package edu.pet_project.studentorder.mail;
+package edu.pet_project.studentorder.exception;
 
 public class TransportException extends Exception{
     public TransportException() {
