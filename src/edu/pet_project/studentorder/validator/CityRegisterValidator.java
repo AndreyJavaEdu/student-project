@@ -24,7 +24,6 @@ public class CityRegisterValidator {
             AnswerCityRegister ans = new AnswerCityRegister();
             ans.addItem(checkPerson(so.getHusband())); // в студ заявлении есть муж
             ans.addItem(checkPerson(so.getWife()));
-            //1 способ пройтись по всем элементам по номеру
             List<Child> children = so.getChildren();
             // Способ for each loop
             for (Child child: children) {
