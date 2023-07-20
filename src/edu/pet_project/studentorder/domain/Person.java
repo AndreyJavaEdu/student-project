@@ -10,16 +10,16 @@ public abstract class Person {
    private String surname;
    private String givenName;
    private String patronomyc;//Отчество
-   private LocalDate dateOfBithday;
+   private LocalDate dateOfBirthday;
    private Address address;
 
    public Person(){}
 
-   public Person(String surname, String givenName, String patronomyc, LocalDate dateOfBithday) {
+   public Person(String surname, String givenName, String patronomyc, LocalDate dateOfBirthday) {
       this.surname = surname;
       this.givenName = givenName;
       this.patronomyc = patronomyc;
-      this.dateOfBithday = dateOfBithday;
+      this.dateOfBirthday = dateOfBirthday;
    }
 
    public Address getAddress() {
@@ -54,11 +54,11 @@ public abstract class Person {
       this.patronomyc = patronomyc;
    }
 
-   public LocalDate getDateOfBithday() {
-      return dateOfBithday;
+   public LocalDate getDateOfBirthday() {
+      return dateOfBirthday;
    }
 
-   public void setDateOfBithday(LocalDate dateOfBithday) {
-      this.dateOfBithday = dateOfBithday;
+   public void setDateOfBirthday(LocalDate dateOfBirthday) {
+      this.dateOfBirthday = dateOfBirthday;
    }
 }
