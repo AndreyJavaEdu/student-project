@@ -36,5 +36,38 @@ create table jc_register_office
     PRIMARY KEY(r_office_id),
     FOREIGN KEY (r_office_area_id)
         references jc_country_struct(area_id) ON DELETE RESTRICT
-
 );
+
+create table jc_student_order
+(
+
+    student_order_id SERIAL,
+    h_surname varchar(100) not null,
+    h_given_name varchar(100) not null,
+    h_patronomyc varchar(100) not null,
+    h_date_of_birth date not null,
+    h_post_index varchar(10),
+    h_street_code integer not null,
+    h_building varchar(10) not null,
+    h_extension varchar(10),
+    h_apartment varchar(10),
+
+    w_surname varchar(100) not null,
+    w_given_name varchar(100) not null,
+    w_patronomyc varchar(100) not null,
+    w_date_of_birth date not null,
+    w_post_index varchar(10),
+    w_street_code integer not null,
+    w_building varchar(10) not null,
+    w_extension varchar(10),
+    w_apartment varchar(10),
+
+    certificate_id varchar(20) not null,
+    register_office_id integer not null,
+    marriage_date date not null,
+    PRIMARY KEY (student_order_id),
+    FOREIGN KEY (h_street_code) references jc_street(street_code) ON DELETE RESTRICT,
+    FOREIGN KEY (w_street_code) references jc_street(street_code) ON DELETE RESTRICT,
+    FOREIGN KEY (register_office_id) references jc_register_office(r_office_id) ON DELETE RESTRICT
+
+)
