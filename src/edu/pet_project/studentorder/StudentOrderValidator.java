@@ -49,7 +49,7 @@ public class StudentOrderValidator {
     }
 
     public void checkOneOrder (StudentOrder so){
-            AnswerCityRegister cityRegister = checkCityRegister(so);
+            AnswerCityRegister cityAnswer = checkCityRegister(so);
 //            AnswerChildren childAnswer = chekChildren(so);
 //            AnswerStudent  studentAnswer = checkStudent(so);
 //            AnswerWedding weddingAnswer = checkWedding(so);
