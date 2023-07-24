@@ -7,6 +7,7 @@ import edu.pet_project.studentorder.validator.CityRegisterValidator;
 import edu.pet_project.studentorder.validator.StudentValidator;
 import edu.pet_project.studentorder.validator.WeddingValidator;
 
+import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,6 +27,9 @@ public class StudentOrderValidator {
     }
 
     public static void main(String[] args) {
+
+
+
         StudentOrderValidator sov = new StudentOrderValidator();
         sov.checkAll();
 
