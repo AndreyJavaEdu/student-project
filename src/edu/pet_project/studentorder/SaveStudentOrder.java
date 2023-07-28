@@ -12,7 +12,7 @@ import java.util.List;
 public class    SaveStudentOrder {
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException, DaoException {
-        List<Street> d = new DictionaryDaoImpl().findStreets("sec");
+        List<Street> d = new DictionaryDaoImpl().findStreets("");
         for (Street s : d){
             System.out.println(s.getStreetName());
         }
