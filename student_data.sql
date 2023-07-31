@@ -1,3 +1,10 @@
+INSERT INTO jc_street (street_code, street_name) VALUES
+(1, 'улица Садовая'),
+(2, 'Невский проспект'),
+(3, 'улица Стахановцев '),
+(4, 'улица Гороховая'),
+(5, 'проспект Ветеранов');
+
 INSERT INTO jc_country_struct (area_id, area_name) VALUES
 ('010000000000', 'Город'),
 ('010010000000', 'Город Район 1'),

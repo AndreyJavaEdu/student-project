@@ -10,9 +10,9 @@ public class StudentOrder {
    private Adult husband;
    private Adult wife;
    private List<Child> children;
-    private String MarriageCertificateId;
-
-    private LocalDate MarriageDate;
+   private String MarriageCertificateId;
+   private RegisterOffice marriageOffice;
+   private LocalDate MarriageDate;
 
     public void addChild(Child child){
         if (children ==null){
@@ -24,15 +24,7 @@ public class StudentOrder {
         return children;
     }
 
-    private String MerrigeOfice;
 
-    public String getMerrigeOfice() {
-        return MerrigeOfice;
-    }
-
-    public void setMerrigeOfice(String merrigeOfice) {
-        MerrigeOfice = merrigeOfice;
-    }
 
     public LocalDate getMarriageDate() {
         return MarriageDate;
@@ -74,4 +66,11 @@ public class StudentOrder {
         this.wife = wife;
     }
 
+    public RegisterOffice getMarriageOffice() {
+        return marriageOffice;
+    }
+
+    public void setMarriageOffice(RegisterOffice marriageOffice) {
+        this.marriageOffice = marriageOffice;
+    }
 }
