@@ -42,7 +42,7 @@ create table jc_student_order
 (
     student_order_id SERIAL,
     student_order_status int not null ,
-    student_order_date timestamp not null , // в какое время подана заявка включает время и дату
+    student_order_date timestamp not null ,
 
 
     h_surname varchar(100) not null,
