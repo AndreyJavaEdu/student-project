@@ -84,7 +84,7 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
             if (gkRs.next()){
                 result = gkRs.getLong(1);
             }
-
+            gkRs.close();
 
         } catch (SQLException ex) {
             throw new DaoException(ex);
