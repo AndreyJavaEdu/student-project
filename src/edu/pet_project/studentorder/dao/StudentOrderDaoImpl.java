@@ -4,6 +4,7 @@ import edu.pet_project.studentorder.config.Config;
 import edu.pet_project.studentorder.domain.*;
 import edu.pet_project.studentorder.exception.DaoException;
 
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.time.LocalDateTime;
 
@@ -31,8 +32,9 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
 
     @Override
     public Long saveStudentOrder(StudentOrder so) throws DaoException {
+        Long result =-1L;
         try (Connection con = getConnection();
-             PreparedStatement stmt = con.prepareStatement(INSERT_ORDER)) {
+             PreparedStatement stmt = con.prepareStatement(INSERT_ORDER, new String[]{"student_order_id"})) {
 
             //Header
             stmt.setInt(1, StudentOrderStatus.START.ordinal());
@@ -78,13 +80,16 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
             stmt.setDate(31, java.sql.Date.valueOf(so.getMarriageDate()));
 
             stmt.executeUpdate();
-
-
+            ResultSet gkRs =  stmt.getGeneratedKeys();
+            if (gkRs.next()){
+                result = gkRs.getLong(1);
+            }
+            gkRs.close();
 
         } catch (SQLException ex) {
             throw new DaoException(ex);
         }
-        return 0L;
+        return result;
     }
 }
 
