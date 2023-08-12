@@ -51,7 +51,14 @@ public class    SaveStudentOrder {
         StudentOrder s = buildStudentOrder(10);
         StudentOrderDao dao = new StudentOrderDaoImpl();
         Long id = dao.saveStudentOrder(s);
-        System.out.println(id);
+//        System.out.println(id);
+        
+        //Проверяем данные который вытаскиваем SQL Селектом
+        List<StudentOrder> soList = dao.getStudentOrders();
+        for (StudentOrder so: soList) {
+            System.out.println(so.getStudentOrderId());
+
+        }
 
 
 //        StudentOrder so = new StudentOrder();
