@@ -13,12 +13,20 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
             "INSERT INTO public.jc_student_order(" +
                     "student_order_status, student_order_date, h_surname, h_given_name," +
                     " h_patronomyc, h_date_of_birth, h_pasport_seria, h_passport_number, h_passport_date," +
-                    " h_passport_office_id, h_post_index, h_street_code, h_building, h_extension, h_apartment," +
-                    " w_surname, w_given_name, w_patronomyc, w_date_of_birth, w_pasport_seria, w_passport_number," +
-                    " w_passport_date, w_passport_office_id, w_post_index, w_street_code, w_building, w_extension," +
-                    " w_apartment, certificate_id, register_office_id, marriage_date)" +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?," +
-                    " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                    " h_passport_office_id, h_post_index, h_street_code, h_building, " +
+                    "h_extension, h_apartment, h_university_id, h_student_number, w_surname, w_given_name, w_patronomyc," +
+                    " w_date_of_birth, w_pasport_seria, w_passport_number," +
+                    " w_passport_date, w_passport_office_id, w_post_index, w_street_code, " +
+                    "w_building, w_extension, w_apartment, w_university_id, w_student_number,  " +
+                    "certificate_id, register_office_id, marriage_date)" +
+                    "VALUES (?, ?, ?, ?," +
+                    " ?, ?, ?, ?, ?, " +
+                    "?, ?, ?, ?," +
+                    "?, ?, ?, ?, ?, ?, ?," +
+                    " ?, ?, ?," +
+                    " ?, ?, ?, ?, " +
+                    "?, ?, ?, ?, ?," +
+                    "?, ?, ?);";
     private static final String INSERT_CHILD =
             "INSERT INTO public.jc_student_child" +
                     "(student_order_id, с_surname, с_gсiven_name, с_patronomyc, с_date_of_birth, с_certificate_number, " +
@@ -50,12 +58,12 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
 
                 //Husband and Wife - вызов метода
                 setParamsForAdult(stmt, 3, so.getHusband());
-                setParamsForAdult(stmt, 16, so.getWife());
+                setParamsForAdult(stmt, 18, so.getWife());
 
                 //Marriage - сведения о регистрации брака
-                stmt.setString(29, so.getMarriageCertificateId());
-                stmt.setLong(30, so.getMarriageOffice().getOfficeId());
-                stmt.setDate(31, java.sql.Date.valueOf(so.getMarriageDate()));
+                stmt.setString(33, so.getMarriageCertificateId());
+                stmt.setLong(34, so.getMarriageOffice().getOfficeId());
+                stmt.setDate(35, java.sql.Date.valueOf(so.getMarriageDate()));
 
                 stmt.executeUpdate();
                 ResultSet gkRs = stmt.getGeneratedKeys();
@@ -97,6 +105,8 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         stmt.setDate(start +6, java.sql.Date.valueOf(adult.getIssueDate()));
         stmt.setLong(start +7, adult.getIssueDepartment().getOfficeId());
         setParamsForAddress(stmt, start + 8, adult);
+        stmt.setLong(start +13, adult.getUniversity().getUniversityId());
+        stmt.setString(start + 14, adult.getStudentId());
     }
     private void setParamsForChild(PreparedStatement stmt, Child child) throws SQLException {
         setParamsForPerson(stmt, 2, child);
@@ -112,12 +122,12 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         stmt.setDate(start +3, java.sql.Date.valueOf(person.getDateOfBirthday()));
     }
     private void setParamsForAddress(PreparedStatement stmt, int start, Person person) throws SQLException {
-        Address h_adress = person.getAddress();
-        stmt.setString(start, h_adress.getPostCode());
-        stmt.setLong(start +1, h_adress.getStreet().getStreetCode());
-        stmt.setString(start +2, h_adress.getBuilding());
-        stmt.setString(start +3, h_adress.getExtension());
-        stmt.setString(start +4, h_adress.getApartment());
+        Address adult_adress = person.getAddress();
+        stmt.setString(start, adult_adress.getPostCode());
+        stmt.setLong(start +1, adult_adress.getStreet().getStreetCode());
+        stmt.setString(start +2, adult_adress.getBuilding());
+        stmt.setString(start +3, adult_adress.getExtension());
+        stmt.setString(start +4, adult_adress.getApartment());
     }
 }
 
