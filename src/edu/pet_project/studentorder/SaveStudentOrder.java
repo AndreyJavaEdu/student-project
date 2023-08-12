@@ -98,14 +98,14 @@ public class    SaveStudentOrder {
         wife.setAddress(address);
 
         //Ребенок
-        Child child1 = new Child("Петрова", "Ирина", "Викторовна", LocalDate.of(2018, 6, 29));
+        Child child1 = new Child("Петрова", "Ирина", "Викторовна", LocalDate.of(2018, 5, 12));
         child1.setCertificateNumber("" + (300000+id));
-        child1.setIssueDate(LocalDate.of(2018, 7, 19));
+        child1.setIssueDate(LocalDate.of(2018, 6, 11));
         RegisterOffice ro2 = new RegisterOffice(2L, "", "");
         child1.setIssueDepartment(ro2);
         child1.setAddress(address);
         //Ребенок
-        Child child2 = new Child("Петров", "Евгений", "Викторович", LocalDate.of(2018, 6, 29));
+        Child child2 = new Child("Петров", "Евгений", "Викторович", LocalDate.of(2018, 4, 29));
         child2.setCertificateNumber("" + (400000+id));
         child2.setIssueDate(LocalDate.of(2018, 7, 19));
         RegisterOffice ro3 = new RegisterOffice(3L, "", "");
