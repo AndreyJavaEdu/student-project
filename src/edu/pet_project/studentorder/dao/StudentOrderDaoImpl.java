@@ -27,7 +27,7 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
 
-    // TODO - makee one method
+    // TODO - make one method
     private Connection getConnection() throws SQLException {
         Connection con = DriverManager.getConnection(
                 Config.getProperty(Config.DB_URL),
@@ -81,21 +81,36 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         }
     }
 
+
+
     private void setParamsForAdult(PreparedStatement stmt, int start, Adult adult) throws SQLException {
-        stmt.setString(start, adult.getSurname());
-        stmt.setString(start +1, adult.getGivenName());
-        stmt.setString(start +2, adult.getPatronomyc());
-        stmt.setDate(start +3, Date.valueOf(adult.getDateOfBirthday()));
+        setParamsForPerson(stmt, start, adult);
         stmt.setString(start +4, adult.getPassportSerial());
         stmt.setString(start +5, adult.getPassportNumber());
-        stmt.setDate(start +6, Date.valueOf(adult.getIssueDate()));
+        stmt.setDate(start +6, java.sql.Date.valueOf(adult.getIssueDate()));
         stmt.setLong(start +7, adult.getIssueDepartment().getOfficeId());
-        Address h_adress = adult.getAddress();
-        stmt.setString(start +8, h_adress.getPostCode());
-        stmt.setLong(start +9, h_adress.getStreet().getStreetCode());
-        stmt.setString(start +10, h_adress.getBuilding());
-        stmt.setString(start +11, h_adress.getExtension());
-        stmt.setString(start +12, h_adress.getApartment());
+        setParamsForAddress(stmt, start + 8, adult);
+    }
+    private void setParamsForChild(PreparedStatement stmt, Child child) throws SQLException {
+        setParamsForPerson(stmt, 2, child);
+        stmt.setString(6, child.getCertificateNumber());
+        stmt.setDate(7, java.sql.Date.valueOf(child.getIssueDate()));
+        stmt.setLong(8, child.getIssueDepartment().getOfficeId());
+        setParamsForAddress(stmt, 9, child);
+    }
+    private void setParamsForPerson(PreparedStatement stmt, int start, Person person) throws SQLException {
+        stmt.setString(start, person.getSurname());
+        stmt.setString(start +1, person.getGivenName());
+        stmt.setString(start +2, person.getPatronomyc());
+        stmt.setDate(start +3, java.sql.Date.valueOf(person.getDateOfBirthday()));
+    }
+    private void setParamsForAddress(PreparedStatement stmt, int start, Person person) throws SQLException {
+        Address h_adress = person.getAddress();
+        stmt.setString(start, h_adress.getPostCode());
+        stmt.setLong(start +1, h_adress.getStreet().getStreetCode());
+        stmt.setString(start +2, h_adress.getBuilding());
+        stmt.setString(start +3, h_adress.getExtension());
+        stmt.setString(start +4, h_adress.getApartment());
     }
 }
 
