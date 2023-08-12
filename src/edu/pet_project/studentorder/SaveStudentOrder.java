@@ -85,6 +85,8 @@ public class    SaveStudentOrder {
          husband.setIssueDepartment(po1);
          husband.setStudentId("" + (1000 + id));
          husband.setAddress(address);
+         husband.setUniversity(new University(2L, ""));
+         husband.setStudentId("HH12345");
 //        System.out.println();
 
          //Жена
@@ -96,6 +98,9 @@ public class    SaveStudentOrder {
         wife.setIssueDepartment(po2);
         wife.setStudentId("" + (200000 + id));
         wife.setAddress(address);
+        wife.setUniversity(new University(1L, ""));
+        wife.setStudentId("WW12345");
+
 
         //Ребенок
         Child child1 = new Child("Петрова", "Ирина", "Викторовна", LocalDate.of(2018, 5, 12));
