@@ -9,7 +9,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 
 public class StudentOrderDaoImpl implements StudentOrderDao {
-    public static final String INSERT_ORDER =
+    private static final String INSERT_ORDER =
             "INSERT INTO public.jc_student_order(" +
                     "student_order_status, student_order_date, h_surname, h_given_name," +
                     " h_patronomyc, h_date_of_birth, h_pasport_seria, h_passport_number, h_passport_date," +
@@ -19,6 +19,12 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                     " w_apartment, certificate_id, register_office_id, marriage_date)" +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?," +
                     " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    private static final String INSERT_CHILD =
+            "INSERT INTO public.jc_student_child" +
+                    "(student_order_id, с_surname, с_gсiven_name, с_patronomyc, с_date_of_birth, с_certificate_number, " +
+                    "с_certificate_date, с_register_office_id, с_post_index, " +
+                    "с_street_code, с_building, с_extension, с_apartment)" +
+                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
 
     // TODO - makee one method
@@ -56,10 +62,23 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
             }
             gkRs.close();
 
+            saveChildren(con, so, result);
+
         } catch (SQLException ex) {
             throw new DaoException(ex);
         }
         return result;
+    }
+
+    private void saveChildren(Connection con, StudentOrder so, Long soId) throws SQLException {
+        try(PreparedStatement stmt = con.prepareStatement(INSERT_CHILD)) {
+            for (Child child : so.getChildren()) {
+                stmt.setLong(1, soId);
+                setParamsForChild(stmt, child);
+                stmt.executeUpdate();
+
+            }
+        }
     }
 
     private void setParamsForAdult(PreparedStatement stmt, int start, Adult adult) throws SQLException {
