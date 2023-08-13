@@ -173,8 +173,10 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         adult.setPassportNumber(rs.getString(pref+"passport_number"));
         adult.setIssueDate(rs.getDate(pref+"passport_date").toLocalDate());
 
-        long pOfficeId = rs.getLong(pref + "passport_office_id");
-        PassportOffice po = new PassportOffice(pOfficeId, "", "");
+        Long pOfficeId = rs.getLong(pref + "passport_office_id");
+        String pAreaId = rs.getString(pref+"p_office_area_id");
+        String pOfficeName = rs.getString(pref + "p_office_name");
+        PassportOffice po = new PassportOffice(pOfficeId, pAreaId, pOfficeName);
         adult.setIssueDepartment(po);
 
         Address adr = new Address();
