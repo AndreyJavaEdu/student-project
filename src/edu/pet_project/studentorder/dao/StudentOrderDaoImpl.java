@@ -43,7 +43,7 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                         "inner join jc_register_office ro on (so.register_office_id = ro.r_office_id) " +
                         "inner join jc_passport_office h_jpo on h_passport_office_id = h_jpo.p_office_id " +
                         "inner join jc_passport_office w_jpo on w_passport_office_id =w_jpo.p_office_id  " +
-                        "WHERE student_order_status = 0 ORDER BY student_order_date";
+                        "WHERE student_order_status = ? ORDER BY student_order_date";
 
 
     // TODO - make one method
@@ -140,6 +140,7 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         List<StudentOrder> result = new LinkedList<>();
         try (Connection con = getConnection();
              PreparedStatement stmt = con.prepareStatement(SELECT_ORDERS)){
+            stmt.setInt(1, StudentOrderStatus.START.ordinal());
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()){
