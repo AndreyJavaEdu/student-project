@@ -36,9 +36,14 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                     "с_street_code, с_building, с_extension, с_apartment)" +
                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String SELECT_ORDERS =
-            "SELECT so.*, ro.r_office_area_id, ro.r_office_name FROM jc_student_order so " +
-                    "inner join jc_register_office ro on (so.register_office_id = ro.r_office_id) " +
-                    " WHERE student_order_status = 0 ORDER BY student_order_date; ";
+                "SELECT ro.r_office_area_id, ro.r_office_name, so.*, " +
+                        "h_jpo.p_office_area_id as h_p_office_area_id , h_jpo.p_office_name as h_p_office_name, " +
+                        "w_jpo.p_office_area_id as w_p_office_area_id, w_jpo.p_office_name as w_p_office_name " +
+                        "FROM jc_student_order so " +
+                        "inner join jc_register_office ro on (so.register_office_id = ro.r_office_id) " +
+                        "inner join jc_passport_office h_jpo on h_passport_office_id = h_jpo.p_office_id " +
+                        "inner join jc_passport_office w_jpo on w_passport_office_id =w_jpo.p_office_id  " +
+                        "WHERE student_order_status = 0 ORDER BY student_order_date";
 
 
     // TODO - make one method
