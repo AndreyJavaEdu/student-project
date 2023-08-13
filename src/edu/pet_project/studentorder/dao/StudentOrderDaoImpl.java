@@ -47,7 +47,6 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                 Config.getProperty(Config.DB_PASSWORD));
         return con;
     }
-
     @Override
     public Long saveStudentOrder(StudentOrder so) throws DaoException {
         Long result =-1L;
@@ -55,7 +54,6 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
              PreparedStatement stmt = con.prepareStatement(INSERT_ORDER, new String[]{"student_order_id"})) {
             con.setAutoCommit(false);
             try {
-
                 //Header
                 stmt.setInt(1, StudentOrderStatus.START.ordinal());
                 stmt.setTimestamp(2, java.sql.Timestamp.valueOf(LocalDateTime.now())); //текущая дата
@@ -88,7 +86,6 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         }
         return result;
     }
-
     @Override
     public List<StudentOrder> getStudentOrders() throws DaoException {
         List<StudentOrder> result = new LinkedList<>();
@@ -98,8 +95,15 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
 
             while (rs.next()){
                 StudentOrder so = new StudentOrder();
+
                 fillStudentOrder(rs, so);
                 fillMarriage(rs, so);
+
+                Adult husband = fillAdult(rs, "h_");
+                Adult wife = fillAdult(rs, "w_");
+                so.setHusband(husband);
+                so.setWife(wife);
+
                 result.add(so);
             }
 
@@ -110,7 +114,38 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         return result;
     }
 
+    private Adult fillAdult(ResultSet rs, String pref) throws SQLException {
+        Adult adult = new Adult();
+        adult.setSurname(rs.getString(pref+"surname"));
+        adult.setGivenName(rs.getString(pref+"given_name"));
+        adult.setPatronomyc(rs.getString(pref+"patronomyc"));
 
+        adult.setDateOfBirthday(rs.getDate(pref+"date_of_birth").toLocalDate());
+        adult.setPassportSerial(rs.getString(pref+"pasport_seria"));
+        adult.setPassportNumber(rs.getString(pref+"passport_number"));
+        adult.setIssueDate(rs.getDate(pref+"passport_date").toLocalDate());
+
+        long pOfficeId = rs.getLong(pref + "passport_office_id");
+        PassportOffice po = new PassportOffice(pOfficeId, "", "");
+        adult.setIssueDepartment(po);
+
+        Address adr = new Address();
+        adr.setPostCode(rs.getString(pref+"post_index"));
+        adr.setBuilding(rs.getString(pref + "building"));
+        adr.setExtension(rs.getString(pref + "extension"));
+        adr.setApartment(rs.getString(pref + "apartment"));
+        Street st = new Street(rs.getLong(pref + "street_code"), "");
+        adr.setStreet(st);
+        adult.setAddress(adr);
+
+        University uni = new University();
+        uni.setUniversityId(rs.getLong(pref + "university_id"));
+        uni.setUniversityName("");
+        adult.setUniversity(uni);
+        adult.setStudentId(rs.getString(pref+ "student_number"));
+
+        return adult;
+    }
 
     private void fillStudentOrder(ResultSet rs, StudentOrder so) throws SQLException {
             so.setStudentOrderId(rs.getLong("student_order_id"));
