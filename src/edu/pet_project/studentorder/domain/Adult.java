@@ -10,6 +10,9 @@ public class Adult extends Person {
     private University university; // название универа
     private String studentId; // Идентификатор студенческого билета
 
+    public Adult() {
+    }
+
     public Adult(String surname, String givenName, String patronomyc, LocalDate dateOfBithday) {
         super(surname, givenName, patronomyc, dateOfBithday);
     }
