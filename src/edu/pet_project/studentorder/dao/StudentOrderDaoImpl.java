@@ -45,6 +45,12 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                         "inner join jc_passport_office w_jpo on w_passport_office_id =w_jpo.p_office_id  " +
                         "WHERE student_order_status = ? ORDER BY student_order_date";
 
+    private static final String SELECT_CHILD =
+            "SELECT soc.*, ro.r_office_area_id, ro.r_office_name " +
+            "FROM jc_student_child soc " +
+            "INNER JOIN jc_register_office ro on (ro.r_office_id = soc.с_register_office_id) " +
+            "WHERE soc.student_order_id in ";
+
 
     // TODO - make one method
     private Connection getConnection() throws SQLException {
