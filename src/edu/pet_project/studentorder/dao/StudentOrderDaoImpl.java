@@ -148,7 +148,7 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
              PreparedStatement stmt = con.prepareStatement(SELECT_ORDERS)){
             stmt.setInt(1, StudentOrderStatus.START.ordinal());
             ResultSet rs = stmt.executeQuery();
-
+            List<Long> ids = new LinkedList<>();
             while (rs.next()){
                 StudentOrder so = new StudentOrder();
 
@@ -161,7 +161,16 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                 so.setWife(wife);
 
                 result.add(so);
+
+                ids.add(so.getStudentOrderId());
             }
+            StringBuilder sb = new StringBuilder("("); //формируем строку для параметра Селекта в конце после in
+
+            for (Long id: ids){
+                sb.append((sb.length()>1 ? "," : "") +  String.valueOf(id));
+            }
+            sb.append(")");
+            System.out.println(sb.toString());
 
             rs.close();
         }catch (SQLException ex){
