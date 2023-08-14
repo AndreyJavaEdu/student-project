@@ -37,7 +37,7 @@ public class StudentOrder {
 
     public void addChild(Child child){
         if (children ==null){
-            children = new ArrayList<>(5);
+            children = new ArrayList<>(5); // создаем ArrayList c числом ячеек 5
         }
         children.add(child);
     }
