@@ -9,6 +9,8 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StudentOrderDaoImpl implements StudentOrderDao {
     private static final String INSERT_ORDER =
@@ -148,7 +150,6 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
              PreparedStatement stmt = con.prepareStatement(SELECT_ORDERS)){
             stmt.setInt(1, StudentOrderStatus.START.ordinal());
             ResultSet rs = stmt.executeQuery();
-            List<Long> ids = new LinkedList<>();
             while (rs.next()){
                 StudentOrder so = new StudentOrder();
 
@@ -161,23 +162,32 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                 so.setWife(wife);
 
                 result.add(so);
-
-                ids.add(so.getStudentOrderId());
             }
-            StringBuilder sb = new StringBuilder("("); //формируем строку для параметра Селекта в конце после in
-
-            for (Long id: ids){
-                sb.append((sb.length()>1 ? "," : "") +  String.valueOf(id));
-            }
-            sb.append(")");
-            System.out.println(sb.toString());
-
+            findChildren(con, result);
             rs.close();
         }catch (SQLException ex){
             throw new DaoException(ex);
         }
         return result;
     }
+
+    private void findChildren(Connection con, List<StudentOrder> result) throws SQLException {
+        //сформировали прибавочный кусочек для Селекта
+        String cl = "(" + result.stream().map(so -> String.valueOf(so.getStudentOrderId())).
+                collect(Collectors.joining(", ")) + ")";
+        System.out.println(cl);
+
+        try (PreparedStatement stmt = con.prepareStatement(SELECT_CHILD + cl)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()){
+                System.out.println((rs.getLong(1)) + ":" + rs.getString(3) + ":" + rs.getLong(2));
+
+            }
+            rs.close();
+
+        }
+    }
+
     private Adult fillAdult(ResultSet rs, String pref) throws SQLException {
         Adult adult = new Adult();
         adult.setSurname(rs.getString(pref+"surname"));
