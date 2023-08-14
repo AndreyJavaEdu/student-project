@@ -6,9 +6,11 @@ import edu.pet_project.studentorder.exception.DaoException;
 
 import javax.xml.transform.Result;
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -177,17 +179,20 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                 collect(Collectors.joining(", ")) + ")";
         System.out.println(cl);
 
+        Map<Long, StudentOrder> maps = result.stream().collect(Collectors.toMap(so -> so.getStudentOrderId(), so -> so)); // перевели LinkedList в Map
+
         try (PreparedStatement stmt = con.prepareStatement(SELECT_CHILD + cl)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()){
-                System.out.println((rs.getLong(1)) + ":" + rs.getString(3) + ":" + rs.getLong(2));
+                Child ch = fillChild(rs);
+                StudentOrder so = maps.get(rs.getLong("student_order_id"));
+                so.addChild(ch);
 
             }
             rs.close();
 
         }
     }
-
     private Adult fillAdult(ResultSet rs, String pref) throws SQLException {
         Adult adult = new Adult();
         adult.setSurname(rs.getString(pref+"surname"));
@@ -236,6 +241,33 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         String name = rs.getString("r_office_name");
         RegisterOffice ro = new RegisterOffice(roId, areaId, name);
         so.setMarriageOffice(ro);
+    }
+    private Child fillChild(ResultSet rs) throws SQLException {
+        String surName = rs.getString("с_surname");
+        String givenName = rs.getString("с_gсiven_name");
+        String patronomic = rs.getString("с_patronomyc");
+        LocalDate birth = rs.getDate("с_date_of_birth").toLocalDate();
+
+        Child child = new Child(surName, givenName, patronomic, birth);
+
+        child.setCertificateNumber(rs.getString("с_certificate_number"));
+        child.setIssueDate(rs.getDate("с_certificate_date").toLocalDate());
+        RegisterOffice ro = new RegisterOffice(rs.getLong("с_register_office_id"),
+                rs.getString("r_office_area_id"),
+                rs.getString("r_office_name"));
+        child.setIssueDepartment(ro);
+
+        Address adr = new Address();
+        Street st = new Street(rs.getLong("с_street_code"), "");
+        adr.setStreet(st);
+        adr.setPostCode(rs.getString("с_post_index"));
+        adr.setBuilding(rs.getString("с_building"));
+        adr.setExtension(rs.getString("с_extension"));
+        adr.setApartment(rs.getString("с_apartment"));
+        child.setAddress(adr);
+
+
+        return child;
     }
 }
 
