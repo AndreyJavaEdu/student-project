@@ -8,6 +8,7 @@ import javax.xml.transform.Result;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,19 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
             "FROM jc_student_child soc " +
             "INNER JOIN jc_register_office ro on (ro.r_office_id = soc.с_register_office_id) " +
             "WHERE soc.student_order_id in ";
+
+    private static final String SELECT_ORDERS_FULL =
+            "SELECT ro.r_office_area_id, ro.r_office_name, so.*, " +
+                    "h_jpo.p_office_area_id as h_p_office_area_id , h_jpo.p_office_name as h_p_office_name, " +
+                    "w_jpo.p_office_area_id as w_p_office_area_id, w_jpo.p_office_name as w_p_office_name, " +
+                    "soc.*, ro_c.r_office_area_id, ro_c.r_office_name "+
+                    "FROM jc_student_order so " +
+                    "INNER JOIN jc_register_office ro on (so.register_office_id = ro.r_office_id) " +
+                    "INNER JOIN  jc_passport_office h_jpo on (h_passport_office_id = h_jpo.p_office_id) " +
+                    "INNER JOIN  jc_passport_office w_jpo on (w_passport_office_id = w_jpo.p_office_id)  " +
+                    "INNER JOIN  jc_student_child soc on (soc.student_order_id = so.student_order_id) "+
+                    "INNER JOIN jc_register_office ro_c on (soc.с_register_office_id = ro_c.r_office_id) " +
+                    "WHERE student_order_status = ? ORDER BY student_order_date";
 
 
     // TODO - make one method
@@ -147,21 +161,41 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
 
     @Override
     public List<StudentOrder> getStudentOrders() throws DaoException {
+        return getStudentOrdersOneSelect();
+//        return getStudentOrdersTwoSelect();
+    }
+    private List<StudentOrder> getStudentOrdersOneSelect() throws DaoException {
+        List<StudentOrder> result = new LinkedList<>();
+        try (Connection con = getConnection();
+             PreparedStatement stmt = con.prepareStatement(SELECT_ORDERS_FULL)){
+            stmt.setInt(1, StudentOrderStatus.START.ordinal());
+            Map<Long, StudentOrder> maps = new HashMap<>();
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Long soId = rs.getLong("student_order_id");
+                if (!maps.containsKey(soId)) { // тут проверяется есть ли у нас такая студенческая заявка вообще
+                    StudentOrder so =getFullStudentOrder(rs);
+
+                    result.add(so);
+                    maps.put(soId, so);
+                }
+                StudentOrder so = maps.get(soId);
+                so.addChild(fillChild(rs));
+            }
+            rs.close();
+        }catch (SQLException ex){
+            throw new DaoException(ex);
+        }
+        return result;
+    }
+    private List<StudentOrder> getStudentOrdersTwoSelect() throws DaoException {
         List<StudentOrder> result = new LinkedList<>();
         try (Connection con = getConnection();
              PreparedStatement stmt = con.prepareStatement(SELECT_ORDERS)){
             stmt.setInt(1, StudentOrderStatus.START.ordinal());
             ResultSet rs = stmt.executeQuery();
             while (rs.next()){
-                StudentOrder so = new StudentOrder();
-
-                fillStudentOrder(rs, so);
-                fillMarriage(rs, so);
-
-                Adult husband = fillAdult(rs, "h_");
-                Adult wife = fillAdult(rs, "w_");
-                so.setHusband(husband);
-                so.setWife(wife);
+                StudentOrder so = getFullStudentOrder(rs);
 
                 result.add(so);
             }
@@ -172,26 +206,23 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         }
         return result;
     }
+        // создаем студ заявку
+    private StudentOrder getFullStudentOrder(ResultSet rs) throws SQLException {
+            StudentOrder so = new StudentOrder();
 
-    private void findChildren(Connection con, List<StudentOrder> result) throws SQLException {
-        //сформировали прибавочный кусочек для Селекта
-        String cl = "(" + result.stream().map(so -> String.valueOf(so.getStudentOrderId())).
-                collect(Collectors.joining(", ")) + ")";
-        System.out.println(cl);
+            fillStudentOrder(rs, so);
+            fillMarriage(rs, so);
 
-        Map<Long, StudentOrder> maps = result.stream().collect(Collectors.toMap(so -> so.getStudentOrderId(), so -> so)); // перевели LinkedList в Map
-
-        try (PreparedStatement stmt = con.prepareStatement(SELECT_CHILD + cl)) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()){
-                Child ch = fillChild(rs);
-                StudentOrder so = maps.get(rs.getLong("student_order_id"));
-                so.addChild(ch);
-
-            }
-            rs.close();
-
+            so.setHusband(fillAdult(rs, "h_"));
+            so.setWife(fillAdult(rs, "w_"));
+            return so;
         }
+
+
+    private void fillStudentOrder(ResultSet rs, StudentOrder so) throws SQLException {
+        so.setStudentOrderId(rs.getLong("student_order_id"));
+        so.setStudentOrderDate(rs.getTimestamp("student_order_date").toLocalDateTime());
+        so.setStudentOrderStatus(StudentOrderStatus.fromValue(rs.getInt("student_order_status")));
     }
     private Adult fillAdult(ResultSet rs, String pref) throws SQLException {
         Adult adult = new Adult();
@@ -227,11 +258,6 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
 
         return adult;
     }
-    private void fillStudentOrder(ResultSet rs, StudentOrder so) throws SQLException {
-        so.setStudentOrderId(rs.getLong("student_order_id"));
-        so.setStudentOrderDate(rs.getTimestamp("student_order_date").toLocalDateTime());
-        so.setStudentOrderStatus(StudentOrderStatus.fromValue(rs.getInt("student_order_status")));
-    }
     private void fillMarriage(ResultSet rs, StudentOrder so) throws SQLException {
         so.setMarriageCertificateId(rs.getString("certificate_id"));
         so.setMarriageDate(rs.getDate("marriage_date").toLocalDate());
@@ -241,6 +267,26 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         String name = rs.getString("r_office_name");
         RegisterOffice ro = new RegisterOffice(roId, areaId, name);
         so.setMarriageOffice(ro);
+    }
+    private void findChildren(Connection con, List<StudentOrder> result) throws SQLException {
+        //сформировали прибавочный кусочек для Селекта
+        String cl = "(" + result.stream().map(so -> String.valueOf(so.getStudentOrderId())).
+                collect(Collectors.joining(", ")) + ")";
+        System.out.println(cl);
+
+        Map<Long, StudentOrder> maps = result.stream().collect(Collectors.toMap(so -> so.getStudentOrderId(), so -> so)); // перевели LinkedList в Map
+
+        try (PreparedStatement stmt = con.prepareStatement(SELECT_CHILD + cl)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()){
+                Child ch = fillChild(rs);
+                StudentOrder so = maps.get(rs.getLong("student_order_id"));
+                so.addChild(ch);
+
+            }
+            rs.close();
+
+        }
     }
     private Child fillChild(ResultSet rs) throws SQLException {
         String surName = rs.getString("с_surname");
