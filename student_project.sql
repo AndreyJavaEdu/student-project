@@ -119,3 +119,6 @@ create table jc_student_child
     FOREIGN KEY (с_register_office_id) references jc_register_office (r_office_id) ON DELETE RESTRICT,
     FOREIGN KEY (student_order_id) references jc_student_order(student_order_id) ON DELETE RESTRICT
 );
+
+CREATE INDEX idx_student_order_status on jc_student_order(student_order_status);
+CREATE INDEX idx_student_order_id on jc_student_child(student_order_id);
