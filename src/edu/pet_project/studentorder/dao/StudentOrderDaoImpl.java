@@ -48,7 +48,7 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                         "inner join jc_register_office ro on (so.register_office_id = ro.r_office_id) " +
                         "inner join jc_passport_office h_jpo on h_passport_office_id = h_jpo.p_office_id " +
                         "inner join jc_passport_office w_jpo on w_passport_office_id =w_jpo.p_office_id  " +
-                        "WHERE student_order_status = ? ORDER BY student_order_date";
+                        "WHERE student_order_status = ? ORDER BY student_order_date LIMIT ?";
 
     private static final String SELECT_CHILD =
             "SELECT soc.*, ro.r_office_area_id, ro.r_office_name " +
@@ -67,7 +67,7 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                     "INNER JOIN  jc_passport_office w_jpo on (w_passport_office_id = w_jpo.p_office_id)  " +
                     "INNER JOIN  jc_student_child soc on (soc.student_order_id = so.student_order_id) "+
                     "INNER JOIN jc_register_office ro_c on (soc.с_register_office_id = ro_c.r_office_id) " +
-                    "WHERE student_order_status = ? ORDER BY student_order_date";
+                    "WHERE student_order_status = ? ORDER BY so.student_order_id LIMIT ?";
 
 
     // TODO - make one method
@@ -169,8 +169,12 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         try (Connection con = getConnection();
              PreparedStatement stmt = con.prepareStatement(SELECT_ORDERS_FULL)){
             stmt.setInt(1, StudentOrderStatus.START.ordinal());
+            int limit = Integer.parseInt(Config.getProperty(Config.DB_LIMIT));
+            stmt.setInt(2, limit);
+
             Map<Long, StudentOrder> maps = new HashMap<>();
             ResultSet rs = stmt.executeQuery();
+            int counter = 0;
             while (rs.next()) {
                 Long soId = rs.getLong("student_order_id");
                 if (!maps.containsKey(soId)) { // тут проверяется есть ли у нас такая студенческая заявка вообще
@@ -181,6 +185,10 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
                 }
                 StudentOrder so = maps.get(soId);
                 so.addChild(fillChild(rs));
+                counter++;
+            }
+            if(counter >= limit){
+               result.remove(result.size()-1); //удаляем последнюю записанную заявку из коллекции LinkedList
             }
             rs.close();
         }catch (SQLException ex){
@@ -193,6 +201,8 @@ public class StudentOrderDaoImpl implements StudentOrderDao {
         try (Connection con = getConnection();
              PreparedStatement stmt = con.prepareStatement(SELECT_ORDERS)){
             stmt.setInt(1, StudentOrderStatus.START.ordinal());
+            stmt.setInt(2, Integer.parseInt(Config.getProperty(Config.DB_LIMIT)));
+
             ResultSet rs = stmt.executeQuery();
             while (rs.next()){
                 StudentOrder so = getFullStudentOrder(rs);
